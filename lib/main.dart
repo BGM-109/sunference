@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
+import 'package:url_launcher/url_launcher.dart';
 
 void main() {
   runApp(const MyApp());
@@ -63,12 +64,6 @@ class MyApp extends StatelessWidget {
                 return const CircularProgressIndicator();
               }
             }),
-        floatingActionButton: FloatingActionButton(
-          child: const Icon(Icons.add),
-          onPressed: () {
-            getData();
-          },
-        ),
       ),
     );
   }
@@ -86,7 +81,7 @@ class DetailScreen extends StatelessWidget {
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(location["name"],
                   style: const TextStyle(
@@ -95,8 +90,21 @@ class DetailScreen extends StatelessWidget {
               Text(location["location"]),
               const SizedBox(height: 8.0),
               Text("${location["start"]} ~ ${location["end"]}"),
-              const SizedBox(height: 8.0),
-              Text(location["link"]),
+              TextButton(
+                  style: TextButton.styleFrom(
+                      padding: EdgeInsets.zero,
+                      alignment: Alignment.centerLeft),
+                  onPressed: () async {
+                    String url = location["link"];
+                    if (await canLaunch(url)) {
+                      await launch(url);
+                    } else {
+                      throw 'Cant not launch $url';
+                    }
+                  },
+                  child: const Text(
+                    "Go to Official Website",
+                  )),
             ],
           ),
         ));
