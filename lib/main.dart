@@ -37,13 +37,24 @@ class MyApp extends StatelessWidget {
             builder: (context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
                 return ListView.separated(
-                    separatorBuilder: (BuildContext context, int index) => const Divider(height: 1,color: Colors.white,),
+                    separatorBuilder: (BuildContext context, int index) =>
+                        const Divider(
+                          height: 1,
+                          color: Colors.white,
+                        ),
                     itemCount: snapshot.data?.length,
                     itemBuilder: (context, index) {
                       return ListTile(
                         title: Text(snapshot.data[index]["name"]),
                         subtitle: Text(snapshot.data[index]["location"]),
-                        onTap: (){},
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => DetailScreen(
+                                    location: snapshot.data[index])),
+                          );
+                        },
                       );
                     });
               } else if (snapshot.hasError) {
@@ -60,5 +71,34 @@ class MyApp extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class DetailScreen extends StatelessWidget {
+  const DetailScreen({Key? key, required this.location}) : super(key: key);
+
+  final Map<String, dynamic> location;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(location["name"],
+                  style: const TextStyle(
+                      fontSize: 32.0, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 8.0),
+              Text(location["location"]),
+              const SizedBox(height: 8.0),
+              Text("${location["start"]} ~ ${location["end"]}"),
+              const SizedBox(height: 8.0),
+              Text(location["link"]),
+            ],
+          ),
+        ));
   }
 }
